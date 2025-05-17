@@ -14,7 +14,7 @@ interface EdgeInfo {
   left: 'flat' | 'tab' | 'indent';
 }
 
-interface PuzzlePiece {
+interface PuzzlePieceType {
   id: number;
   currentPos: Position;
   correctPos: Position;
@@ -93,7 +93,7 @@ interface PuzzleBoardProps {
 }
 
 const PuzzleBoard: React.FC<PuzzleBoardProps> = ({ imageUrl, pieces, renderControls }) => {
-  const [puzzlePieces, setPuzzlePieces] = useState<PuzzlePiece[]>([]);
+  const [puzzlePieces, setPuzzlePieces] = useState<PuzzlePieceType[]>([]);
   const [isScattered, setIsScattered] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showFullImage, setShowFullImage] = useState(true);
@@ -107,11 +107,11 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({ imageUrl, pieces, renderContr
   const ANIMATION_DURATION = 1200;
 
   // Helper function to determine if a piece is at the edge
-  const isCornerPiece = (row: number, col: number) => 
-    (row === 0 || row === gridSize - 1) && (col === 0 || col === gridSize - 1);
+  const isCornerPiece = (row: number, col: number, size: number) => 
+    (row === 0 || row === size - 1) && (col === 0 || col === size - 1);
 
-  const isEdgePiece = (row: number, col: number) =>
-    row === 0 || col === 0 || row === gridSize - 1 || col === gridSize - 1;
+  const isEdgePiece = (row: number, col: number, size: number) =>
+    row === 0 || col === 0 || row === size - 1 || col === size - 1;
 
   // Helper function to get the opposite edge type
   const getOppositeEdge = (edge: 'tab' | 'indent' | 'flat'): 'tab' | 'indent' | 'flat' => {
@@ -136,7 +136,7 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({ imageUrl, pieces, renderContr
       const edgeGrid: EdgeInfo[][] = Array(gridSize).fill(null)
         .map(() => Array(gridSize).fill(null));
 
-      const newPieces: PuzzlePiece[] = [];
+      const newPieces: PuzzlePieceType[] = [];
 
       // Generate pieces sequentially
       for (let row = 0; row < gridSize; row++) {
@@ -149,13 +149,13 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({ imageUrl, pieces, renderContr
             left: 'flat'
           };
 
-          if (isCornerPiece(row, col)) {
+          if (isCornerPiece(row, col, gridSize)) {
             // Corner pieces have two flat edges
             edges.top = row === 0 ? 'flat' : randomEdgeType();
             edges.right = col === gridSize - 1 ? 'flat' : randomEdgeType();
             edges.bottom = row === gridSize - 1 ? 'flat' : randomEdgeType();
             edges.left = col === 0 ? 'flat' : randomEdgeType();
-          } else if (isEdgePiece(row, col)) {
+          } else if (isEdgePiece(row, col, gridSize)) {
             // Edge pieces have one flat edge
             if (row === 0) edges.top = 'flat';
             if (col === 0) edges.left = 'flat';
@@ -174,10 +174,10 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({ imageUrl, pieces, renderContr
           }
 
           // Randomly generate new connecting edges
-          if (!isEdgePiece(row, col) || col < gridSize - 1) {
+          if (!isEdgePiece(row, col, gridSize) || col < gridSize - 1) {
             edges.right = randomEdgeType();
           }
-          if (!isEdgePiece(row, col) || row < gridSize - 1) {
+          if (!isEdgePiece(row, col, gridSize) || row < gridSize - 1) {
             edges.bottom = randomEdgeType();
           }
 
@@ -231,7 +231,7 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({ imageUrl, pieces, renderContr
       // Calculate scattered positions with a margin from borders
       const occupiedSpaces: Position[] = [];
       const newPositions: Position[] = [];
-      const margin = pieceSize * 0.4; // Add 40% of piece size as margin
+      const margin = pieceSize * 0.4;
 
       // Create array of indices and shuffle it for random scatter order
       const indices = [...Array(puzzlePieces.length)].map((_, i) => i);
@@ -241,25 +241,28 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({ imageUrl, pieces, renderContr
       }
       setAnimationOrder(indices);
 
+      // Pre-calculate all random positions before the loop
+      const calculateRandomPosition = () => ({
+        x: margin + Math.random() * (800 - pieceSize - 2 * margin),
+        y: margin + Math.random() * (800 - pieceSize - 2 * margin)
+      });
+
       // Calculate random positions for each piece
       for (let i = 0; i < puzzlePieces.length; i++) {
-        let newPos: Position;
+        let newPos = calculateRandomPosition();
         let attempts = 0;
         const maxAttempts = 50;
 
-        do {
-          newPos = {
-            x: margin + Math.random() * (800 - pieceSize - 2 * margin),
-            y: margin + Math.random() * (800 - pieceSize - 2 * margin)
-          };
-          attempts++;
-        } while (
+        while (
           attempts < maxAttempts &&
           occupiedSpaces.some(pos => 
             Math.abs(pos.x - newPos.x) < pieceSize &&
             Math.abs(pos.y - newPos.y) < pieceSize
           )
-        );
+        ) {
+          newPos = calculateRandomPosition();
+          attempts++;
+        }
 
         occupiedSpaces.push(newPos);
         newPositions.push(newPos);

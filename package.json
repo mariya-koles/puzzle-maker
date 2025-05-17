@@ -2,6 +2,7 @@
   "name": "puzzle-maker",
   "version": "0.1.0",
   "private": true,
+  "main": "public/electron.js",
   "dependencies": {
     "@types/node": "^16.18.0",
     "@types/react": "^18.3.21",
@@ -19,8 +20,11 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron-dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "package-win": "npm run build && electron-packager . puzzle-maker --platform=win32 --arch=x64 --out=dist --overwrite --icon=public/favicon.ico --ignore=\"(node_modules|src|.gitignore|README.md|LICENSE)\" --copy-dev --prune=false"
   },
+  "homepage": ".",
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -40,8 +44,14 @@
     ]
   },
   "description": "A web application that allows users to create and solve jigsaw puzzles from their own images. Built with React and TypeScript.",
-  "main": "index.js",
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "mariya-koles",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "electron": "^36.2.1",
+    "electron-builder": "^26.0.12",
+    "electron-packager": "^17.1.2",
+    "wait-on": "^8.0.3"
+  }
 }

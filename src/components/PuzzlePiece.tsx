@@ -35,7 +35,6 @@ interface PuzzlePieceProps {
 const generatePiecePath = (width: number, height: number, edges: EdgeInfo): string => {
   const tabSize = Math.min(width, height) * 0.45; // Keep the same depth
   const tabWidth = tabSize * 0.7; // Make tabs narrower (70% of their depth)
-  const radius = tabSize * 0.5; // Keep the same curve ratio
   const overlap = 1; // 1 pixel overlap
   
   let path = `M ${-overlap} ${-overlap} `; // Start slightly outside
