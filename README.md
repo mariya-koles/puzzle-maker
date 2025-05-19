@@ -51,6 +51,5 @@ The application will open in your default browser at `http://localhost:3000`.
 - Styled Components
 - HTML Canvas API
 
-## License
+https://github.com/user-attachments/assets/74cb21f7-e43e-4688-8d2c-98cc2b39f769
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
