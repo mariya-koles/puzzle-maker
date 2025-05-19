@@ -41,7 +41,7 @@ The application will open in your default browser at `http://localhost:3000`.
 
 1. Click the upload button or drag and drop an image onto the upload area
 2. Select the desired puzzle size from the toolbar
-3. Drag and drop pieces to solve the puzzle
+3. Select Scatter to break apart the puzzle, and Assemble to re-assemble the puzzle.
 4. Pieces will automatically snap into place when they're close to their correct position
 
 ## Technologies Used
