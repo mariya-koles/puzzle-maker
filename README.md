@@ -6,10 +6,8 @@ A web application that allows users to create and solve jigsaw puzzles from thei
 
 - Upload any image to create a puzzle
 - Choose different puzzle sizes (4x4, 6x6, 8x8, 10x10)
-- Drag and drop puzzle pieces
-- Automatic snapping when pieces are close to their correct position
-- Responsive design that works on both desktop and mobile devices
-
+- Automatic re-assembly of puzzle pieces
+  
 ## Getting Started
 
 ### Prerequisites
